@@ -56,7 +56,21 @@ def topo_sort(graph)
       if destination_node.in_edges.empty?
         top_level.unshift(destination_node)
       end
-      
+
     end
   end
 end
+
+- Complexity and Uses
+  + O(|V| + |E|) ~> O(|E|)
+  + Comes up in interviews even though it's not readily apparent
+    - Given library of dependencies (webpack), what needs to be done first?
+    - Scheduling, given n schedules, do something
+    - Priority List
+    - Shortest Path
+    - Minimal Spanning Tree
+    - Haseeb Qureshi's blog posts
+
+- Optimizations and other methods
+  + modify DFS (Tarjan's Algorithm)
+  + Coffman - Graham (deterministic)
