@@ -1,0 +1,62 @@
+Topological Sort
+
+- Priority List Map
+  + making a graph using a list
+  + A -> B if A has to happen before B
+  + create a list of this map with the highest priority items at the top and the lowest at the bottom
+
+- Topological Sort - overview
+  + ordering nodes in such a way that assures they're in the correct order
+  + some ordering is not deterministic (i.e. they are at the same level of priority)
+  + requires DAG (directional acyclic graph???)
+
+- Representing a graph
+  + Nodes
+    - array/set of Node Objects
+      + values
+  + Edges
+    - 2D array
+      + each sub-array is of size 2
+      + the first element is the start and the last element is the end point
+      + distinct pairs with an undirected graph (i.e. [[1,2],[2,1]] is not allowed)
+    - Adjacency Matrix
+      + 2D array where each spot is a 0 or 1 (or weights)
+      + set always of size |V^2| so it's bad for sparse graphs
+    - add neighbors to Node class
+      + directed graphs
+        - @in_nodes = []
+        - @out_nodes = []
+
+- Kahn's Algorithm
+  + does not give deterministic list
+  + Implementation:
+    1) Create a top_level list of nodes - these nodes do not depend on any other nodes (no in-edges)
+    2) Loop through top level list until it's empty
+      a) Pop node, push onto sorted
+      b) Look at all out-edges
+      c) For each, if destination has in-edges, delete edge. Otherwise, push onto top level
+
+- Pseudocode Implementation:
+  + maintain a list of in, out edges in Node class
+
+def topo_sort(graph)
+
+  sorted = []
+  top_level = graph.find_tops
+
+  until top_level.empty?
+
+    current = top_level.pop
+    sorted << current
+
+    current.out_edges.each do |destination_node|
+
+      graph.delete_edge(current, destination_node)
+
+      if destination_node.in_edges.empty?
+        top_level.unshift(destination_node)
+      end
+      
+    end
+  end
+end
