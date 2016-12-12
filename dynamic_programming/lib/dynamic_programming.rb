@@ -9,6 +9,8 @@ class DPProblems
   def initialize
     # Use this to create any instance variables you may need
     @fibs = [1, 1]
+    @dist_cache = Hash.new { |hash, key| hash[key] = {} }
+    @maze_cache = Hash.new { |hash, key| hash[key] = {} }
   end
 
   # Takes in a positive integer n and returns the nth Fibonacci number
@@ -90,10 +92,46 @@ class DPProblems
     bases.last
   end
 
+  # Credit: App Academy
+
   # String Distance: given two strings, str1 and str2, calculate the minimum number of operations to change str1 into
   # str2.  Allowed operations are deleting a character ("abc" -> "ac", e.g.), inserting a character ("abc" -> "abac", e.g.),
   # and changing a single character into another ("abc" -> "abz", e.g.).
+
+  # Bottom up implementation
   def str_distance(str1, str2)
+    ans = str_distance_helper(str1, str2)
+    @dist_cache = Hash.new { |hash, key| hash[key] = {} }
+    ans
+  end
+
+  def str_distance_helper(str1, str2)
+    return @dist_cache[str1][str2] if @dist_cache[str1][str2]
+    if str1 == str2
+      @dist_cache[str1][str2] = 0
+      return 0
+    end
+
+    if str1.nil?
+      return str2.length
+    elsif str2.nil?
+      return str1.length
+    end
+
+    len1 = str1.length
+    len2 = str2.length
+    if str1[0] == str2[0]
+      dist = str_distance_helper(str1[1..len1], str2[1..len2])
+      @dist_cache[str1][str2] = dist
+      return dist
+    else
+      poss1 = 1 + str_distance_helper(str1[1..len1], str2[1..len2])
+      poss2 = 1 + str_distance_helper(str1, str2[1..len2])
+      poss3 = 1 + str_distance_helper(str1[1..len1], str2)
+      dist = [poss1, poss2, poss3].min
+      @dist_cache[str1][str2] = dist
+      dist
+    end
   end
 
   # Maze Traversal: write a function that takes in a maze (represented as a 2D matrix) and a starting
@@ -103,12 +141,64 @@ class DPProblems
   #             ['x', ' ', ' ', 'x'],
   #             ['x', 'x', ' ', 'x']]
   # and the start is [1, 1], then the shortest escape route is [[1, 1], [1, 2], [2, 2]] and thus your function should return 3.
+
+  # Bottom up solution
   def maze_escape(maze, start)
+    ans = maze_escape_helper(maze, start)
+    @maze_cache = Hash.new { |hash, key| hash[key] = {} }
+    ans
+  end
+
+  def maze_escape_helper(maze, start)
+    return @maze_cache[start[0]][start[1]] if @maze_cache[start[0]][start[1]]
+    # base case
+    if (start[0] == 0 || start[1] == 0) || (start[0] == maze.length - 1 || start[1] == maze[0].length - 1)
+      @maze_cache[start[0]][start[1]] = 1
+      return 1
+    end
+
+    # find all possible places to go
+    x = start[0]
+    y = start[1]
+    adj_spaces = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]
+    possible_moves = []
+    adj_spaces.each do |space|
+      if maze[space[0]][space[1]] == ' '
+        possible_moves << space
+      end
+    end
+
+    way_found = false
+    best = maze.length*maze[0].length
+
+    possible_moves.each do |move|
+      temp_maze = make_temp_maze(maze, start)
+      possible_path = maze_escape_helper(temp_maze, move)
+      if possible_path.is_a?(Fixnum) && possible_path < best
+        way_found = true
+        best = possible_path
+      end
+    end
+
+    if way_found
+      @maze_cache[start[0]][start[1]] = best + 1
+      return best + 1
+    else
+      @maze_cache[start[0]][start[1]] = 0.0/0.0
+      return 0.0/0.0
+    end
+  end
+
+  def make_temp_maze(maze, filled_pos)
+    temp_maze = []
+    maze.each_with_index do |row, i|
+      temp_maze << []
+      maze[i].each do |el|
+        temp_maze[i] << el
+      end
+    end
+
+    temp_maze[filled_pos[0]][filled_pos[1]] = 'x'
+    temp_maze
   end
 end
-
-dp = DPProblems.new()
-w = [2, 3, 4, 5]
-v = [3, 7, 2, 9]
-cap = 5
-dp.knapsack(w, v, cap)
