@@ -3,16 +3,21 @@
 # You may find it helpful to delegate the dynamic programming work itself to a helper method so that you can
 # then clean out the caches you use.  You can also change the inputs to include a cache that you pass from call to call.
 
+# 1, 1, 2, 3, 5, 8
+
 class DPProblems
   def initialize
     # Use this to create any instance variables you may need
-    @fibs = [1]
+    @fibs = [1, 1]
   end
 
   # Takes in a positive integer n and returns the nth Fibonacci number
   # Should run in O(n) time
   def fibonacci(n)
-    return @fibs[n] if @fibs[n]
+    return @fibs[n - 1] if @fibs[n - 1]
+    next_fib = fibonacci(n - 1) + fibonacci(n - 2)
+    @fibs << next_fib
+    next_fib
   end
 
   # Make Change: write a function that takes in an amount and a set of coins.  Return the minimum number of coins
