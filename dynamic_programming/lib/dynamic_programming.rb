@@ -63,7 +63,6 @@ class DPProblems
     end
 
     # return the last row/column
-    p knapsacks
     knapsacks[capacity][weights.length - 1]
   end
 
@@ -73,6 +72,22 @@ class DPProblems
   # NB: this is similar to, but not the same as, make_change.  Try implementing this using the opposite
   # DP technique that you used in make_change -- bottom up if you used top down and vice versa.
   def stair_climb(n)
+    bases = [[[]], [[1]], [[1, 1], [2]]]
+    return bases[n] if n < 3
+    (3..n).each do |i|
+      set = []
+      (1..3).each do |j|
+        bases[i - j].each do |k|
+          step = [j]
+          k.each do |l|
+            step << l
+          end
+          set << step
+        end
+      end
+      bases << set
+    end
+    bases.last
   end
 
   # String Distance: given two strings, str1 and str2, calculate the minimum number of operations to change str1 into
