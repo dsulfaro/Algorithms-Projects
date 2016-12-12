@@ -29,7 +29,7 @@ describe 'Make change' do
 
   it 'handles recursive cases' do
     expect(dp.make_change(12, coins)).to equal(2)
-    expect(dp.make_change(3, coins).nan?).to be(true)
+    expect(dp.make_change(3, coins).nil?).to be(true)
     expect(dp.make_change(54, coins)).to equal(6)
     expect(dp.make_change(1000, coins)).to equal(100)
   end

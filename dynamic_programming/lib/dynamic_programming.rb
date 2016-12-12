@@ -26,7 +26,18 @@ class DPProblems
   # and in ascending order.
   def make_change(amt, coins, coin_cache = {0 => 0})
     return 0 if amt == 0
+    return coin_cache[amt] if coin_cache[amt]
     return nil if coins.all? { |coin| coin > amt }
+    min = Float::INFINITY
+    coins.each do |coin|
+      num_coins = make_change(amt - coin, coins, coin_cache)
+      unless num_coins.nil?
+        num_coins += 1
+        min = num_coins if num_coins < min
+      end
+    end
+    coin_cache[amt] = min
+    min == Float::INFINITY ? nil : min
   end
 
   # Knapsack Problem: write a function that takes in an array of weights, an array of values, and a weight capacity
@@ -61,3 +72,7 @@ class DPProblems
   def maze_escape(maze, start)
   end
 end
+
+dp = DPProblems.new()
+coins = [2, 5, 7, 10]
+p dp.make_change(54, coins)
