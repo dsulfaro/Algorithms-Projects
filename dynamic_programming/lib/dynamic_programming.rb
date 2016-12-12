@@ -25,6 +25,8 @@ class DPProblems
   # If it's not possible to make change for a given amount, return nil.  You may assume that the coin array is sorted
   # and in ascending order.
   def make_change(amt, coins, coin_cache = {0 => 0})
+    return 0 if amt == 0
+    return nil if coins.all? { |coin| coin > amt }
   end
 
   # Knapsack Problem: write a function that takes in an array of weights, an array of values, and a weight capacity

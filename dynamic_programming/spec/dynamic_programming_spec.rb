@@ -22,8 +22,9 @@ describe 'Make change' do
     expect(dp.make_change(0, coins)).to equal(0)
   end
 
+  # type here I believe, changed nan? to nil?
   it 'handles a case with no solution' do
-    expect(dp.make_change(1, coins).nan?).to be(true)
+    expect(dp.make_change(1, coins).nil?).to be(true)
   end
 
   it 'handles recursive cases' do
