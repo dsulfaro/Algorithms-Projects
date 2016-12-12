@@ -31,10 +31,7 @@ class DPProblems
     min = Float::INFINITY
     coins.each do |coin|
       num_coins = make_change(amt - coin, coins, coin_cache)
-      unless num_coins.nil?
-        num_coins += 1
-        min = num_coins if num_coins < min
-      end
+      min = num_coins + 1 if num_coins != nil && num_coins < min
     end
     coin_cache[amt] = min
     min == Float::INFINITY ? nil : min
@@ -46,6 +43,28 @@ class DPProblems
   # to include are items 0 and 1, whose values are 10 and 4 respectively.  Duplicates are not allowed -- that is, you
   # can only include a particular item once.
   def knapsack(weights, values, capacity)
+    return 0 if capacity == 0
+
+    # build out table
+    knapsacks = []
+    (0..capacity).each do |i|
+      knapsacks[i] = []
+      (0...weights.length).each do |j|
+        if i == 0
+          knapsacks[i][j] = 0
+        elsif j == 0
+          knapsacks[i][j] = weights[0] > i ? 0 : values[0]
+        else
+          w1 = knapsacks[i][j - 1]
+          w2 = i < weights[j] ? 0 : knapsacks[i - weights[j]][j - 1] + values[j]
+          knapsacks[i][j] = w1 > w2 ? w1 : w2
+        end
+      end
+    end
+
+    # return the last row/column
+    p knapsacks
+    knapsacks[capacity][weights.length - 1]
   end
 
   # Stair Climber: a frog climbs a set of stairs.  It can jump 1 step, 2 steps, or 3 steps at a time.
@@ -74,5 +93,7 @@ class DPProblems
 end
 
 dp = DPProblems.new()
-coins = [2, 5, 7, 10]
-p dp.make_change(54, coins)
+w = [2, 3, 4, 5]
+v = [3, 7, 2, 9]
+cap = 5
+dp.knapsack(w, v, cap)
